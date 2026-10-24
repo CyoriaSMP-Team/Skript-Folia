@@ -332,7 +332,7 @@ public class ItemUtils {
 
 		// poplar
 		if (Skript.isRunningMinecraft(26, 3)) {
-			TREE_TO_SAPLING_MAP.put(TreeType.POPLAR, Material.POPLAR_SAPLING);
+			TREE_TO_SAPLING_MAP.put(TreeType.valueOf("POPLAR"), Material.POPLAR_SAPLING);
 		}
 	}
 
