@@ -330,9 +330,13 @@ public class ItemUtils {
 			TREE_TO_SAPLING_MAP.put(TreeType.PALE_OAK_CREAKING, Material.PALE_OAK_SAPLING);
 		}
 
-		// poplar
+		// poplar (the tree type may be absent from early 26.3 API builds)
 		if (Skript.isRunningMinecraft(26, 3)) {
-			TREE_TO_SAPLING_MAP.put(TreeType.valueOf("POPLAR"), Material.POPLAR_SAPLING);
+			try {
+				TREE_TO_SAPLING_MAP.put(TreeType.valueOf("POPLAR"), Material.valueOf("POPLAR_SAPLING"));
+			} catch (IllegalArgumentException ignored) {
+				// Keep tree mappings available even if poplar is not exposed by this server build.
+			}
 		}
 	}
 
