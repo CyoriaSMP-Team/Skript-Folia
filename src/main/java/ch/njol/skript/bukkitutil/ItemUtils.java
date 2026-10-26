@@ -330,12 +330,15 @@ public class ItemUtils {
 			TREE_TO_SAPLING_MAP.put(TreeType.PALE_OAK_CREAKING, Material.PALE_OAK_SAPLING);
 		}
 
-		// poplar (the tree type may be absent from early 26.3 API builds)
+		// Poplar variants differ between Paper and Spigot 26.3, but share one sapling.
 		if (Skript.isRunningMinecraft(26, 3)) {
-			try {
-				TREE_TO_SAPLING_MAP.put(TreeType.valueOf("POPLAR"), Material.valueOf("POPLAR_SAPLING"));
-			} catch (IllegalArgumentException ignored) {
-				// Keep tree mappings available even if poplar is not exposed by this server build.
+			Material poplarSapling = Material.getMaterial("POPLAR_SAPLING");
+			if (poplarSapling != null) {
+				for (TreeType treeType : TreeType.values()) {
+					if (treeType.name().equals("POPLAR") || treeType.name().endsWith("_POPLAR")) {
+						TREE_TO_SAPLING_MAP.put(treeType, poplarSapling);
+					}
+				}
 			}
 		}
 	}
