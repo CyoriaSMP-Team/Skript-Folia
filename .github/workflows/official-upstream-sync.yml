@@ -17,4 +17,4 @@ jobs:
       target_branch: folia/1.21.11
       java_version: '25'
       build_system: gradle
-      build_command: ./gradlew build
+      build_command: git submodule sync --recursive && git submodule update --init --recursive && ./gradlew build
