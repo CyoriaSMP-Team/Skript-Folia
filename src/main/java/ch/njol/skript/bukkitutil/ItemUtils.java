@@ -330,9 +330,18 @@ public class ItemUtils {
 			TREE_TO_SAPLING_MAP.put(TreeType.PALE_OAK_CREAKING, Material.PALE_OAK_SAPLING);
 		}
 
-		// poplar
+		// Tree types added after the 1.21.11 API; resolve by name so older API builds still compile.
 		if (Skript.isRunningMinecraft(26, 3)) {
-			TREE_TO_SAPLING_MAP.put(TreeType.POPLAR, Material.POPLAR_SAPLING);
+			mapTreeSapling("POPLAR", "POPLAR_SAPLING");
+			mapTreeSapling("RED_POPLAR", "RED_POPLAR_SAPLING");
+		}
+	}
+
+	private static void mapTreeSapling(String treeTypeName, String saplingName) {
+		try {
+			TREE_TO_SAPLING_MAP.put(TreeType.valueOf(treeTypeName), Material.valueOf(saplingName));
+		} catch (IllegalArgumentException ignored) {
+			// This API version does not expose the tree type or its sapling.
 		}
 	}
 
