@@ -123,7 +123,8 @@ public class DataGameEffects {
 
 		registerEffect(Effect.BONE_MEAL_USE, "[fake] bone meal effect [(with|using) %-number% particles]",
 			DataSupplier::getNumberDefault10,
-			(exprs, parseResult, builder) -> builder.append("bone meal effect with", exprs[0], "particles"));
+			(exprs, parseResult, builder) -> builder.append("bone meal effect")
+					.appendIf(exprs[0] != null, "with", exprs[0], "particles"));
 
 		registerEffect(Effect.ELECTRIC_SPARK, "(electric|lightning[ rod]|copper) spark effect [(in|using|along) the (1:x|2:y|3:z) axis]",
 			(event, expressions, parseResult) -> (parseResult.mark == 0 ? null : Axis.values()[parseResult.mark - 1]),
