@@ -145,9 +145,6 @@ public class EntityModule extends HierarchicalAddonModule {
 		XpOrbData.register();
 		ZombieVillagerData.register();
 
-		if (Skript.isRunningMinecraft(26, 3)) {
-			CushionData.register();
-		}
 	}
 	//</editor-fold>
 
