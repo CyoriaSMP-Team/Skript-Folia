@@ -139,7 +139,8 @@ public class DataGameEffects {
 		// there's more to it with how the particles roll and how often the sound plays, but I can't be bothered to
 		// figure it out to a tee.
 		registerEffect(Effect.PARTICLES_SCULK_CHARGE, "sculk (charge|spread) effect [(with|using) data %integer%]",
-			(exprs, parseResult, builder) -> builder.append("sculk charge effect with data", exprs[0]));
+			(exprs, parseResult, builder) -> builder.append("sculk charge effect")
+				.appendIf(exprs[0] != null, "with data", exprs[0]));
 
 		registerEffect(Effect.PARTICLES_AND_SOUND_BRUSH_BLOCK_COMPLETE, "[finish] brush[ing] %itemtype/blockdata% effect",
 			DataSupplier::getBlockData,
@@ -168,7 +169,8 @@ public class DataGameEffects {
 
 		registerEffect(Effect.BEE_GROWTH, "bee growth effect [(with|using) %-number% particles]",
 			DataSupplier::getNumberDefault10,
-			(exprs, parseResult, builder) -> builder.append("bee [plant] grow[th] effect with", exprs[0], "particles"));
+			(exprs, parseResult, builder) -> builder.append("bee [plant] grow[th] effect")
+				.appendIf(exprs[0] != null, "with", exprs[0], "particles"));
 
 		registerEffect(Effect.VAULT_ACTIVATE, "[:ominous] [trial] vault activate effect",
 			DataSupplier::isOminous,
@@ -193,11 +195,13 @@ public class DataGameEffects {
 
 		registerEffect(Effect.TURTLE_EGG_PLACEMENT, "place turtle egg effect [(with|using) %-number% particles]",
 			DataSupplier::getNumberDefault10,
-			(exprs, parseResult, builder) -> builder.append("place turtle egg effect with", exprs[0], "particles"));
+			(exprs, parseResult, builder) -> builder.append("place turtle egg effect")
+				.appendIf(exprs[0] != null, "with", exprs[0], "particles"));
 
 		registerEffect(Effect.SMASH_ATTACK, "[mace] smash attack effect [(with|using) %-number% particles]",
 			DataSupplier::getNumberDefault10,
-			(exprs, parseResult, builder) -> builder.append("smash attack effect with", exprs[0], "particles"));
+			(exprs, parseResult, builder) -> builder.append("smash attack effect")
+				.appendIf(exprs[0] != null, "with", exprs[0], "particles"));
 	}
 
 }
