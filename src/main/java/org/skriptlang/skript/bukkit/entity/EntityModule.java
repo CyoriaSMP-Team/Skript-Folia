@@ -60,7 +60,6 @@ public class EntityModule extends HierarchicalAddonModule {
 	}
 
 	protected void loadSelf(SkriptAddon addon) {
-		EntityData.register();
 		EntityDataClassInfo entityDataClassInfo = new EntityDataClassInfo();
 		Classes.registerClass(entityDataClassInfo);
 		EntityTypeClassInfo entityTypeClassInfo = new EntityTypeClassInfo();
@@ -146,9 +145,6 @@ public class EntityModule extends HierarchicalAddonModule {
 		XpOrbData.register();
 		ZombieVillagerData.register();
 
-		if (Skript.isRunningMinecraft(26, 3)) {
-			CushionData.register();
-		}
 	}
 	//</editor-fold>
 

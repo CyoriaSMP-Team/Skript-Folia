@@ -309,19 +309,6 @@ public class SimpleEntityData extends EntityData<Entity> implements EntityItemTy
 			buildSimple(Parched.class, "parched:s @a", "parched[plural:s]");
 		}
 
-		if (Skript.isRunningMinecraft(26, 2)) {
-			buildSimple(SulfurCube.class, "sulfur cube:s @a", "sulfur (cube|slime)[plural:s]");
-		}
-
-		if (Skript.isRunningMinecraft(26, 3)) {
-			simpleEntity(PoplarBoat.class, "poplar boat:s @a", "poplar boat[plural:s]")
-				.itemTypeComparator(Material.POPLAR_BOAT)
-				.build();
-			simpleEntity(PoplarChestBoat.class, "poplar chest boat:s @a", "poplar chest boat[plural:s]")
-				.itemTypeComparator(Material.POPLAR_CHEST_BOAT)
-				.build();
-		}
-
 		//<editor-fold desc="Super Types" defaultstate="collapsed">
 		buildSuper(Animals.class, "animal:s @an", "animal[plural:s]");
 		buildSuper(AbstractHorse.class, "any horse:s @an", "<age> any horse[plural:s]",
@@ -602,6 +589,23 @@ public class SimpleEntityData extends EntityData<Entity> implements EntityItemTy
 
 	@Override
 	public void deserialize(Fields fields) throws StreamCorruptedException, NotSerializableException {
+		// TODO: Remove after 2.20
+		// 2.16- to 2.17+
+		if (fields.contains("info.codeName")) {
+			String codeName = fields.getAndRemoveObject("info.codeName", String.class);
+			for (PatternGroup<SimpleEntityDataInfo> group : PATTERN_GROUPS) {
+				SimpleEntityDataInfo groupInfo = group.data();
+				assert groupInfo != null;
+				if (group.name().toString(false).equalsIgnoreCase(codeName)) {
+					this.simpleInfo = groupInfo;
+					super.groupIndex = group.index();
+					super.deserialize(fields);
+					return;
+				}
+			}
+			throw new StreamCorruptedException("Invalid SimpleEntityDataInfo Name: " + codeName);
+		}
+		// 2.17+
 		String name = fields.getAndRemoveObject("info.name", String.class);
 		if (name == null)
 			return;
