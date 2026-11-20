@@ -15,9 +15,10 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout with aliases submodule
+      - name: Checkout exact candidate commit with aliases submodule
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: recursive
 
       - name: Set up Java 25
