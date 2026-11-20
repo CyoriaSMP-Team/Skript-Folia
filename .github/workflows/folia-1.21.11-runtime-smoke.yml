@@ -37,11 +37,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          API="https://api.papermc.io/v2/projects/folia/versions/1.21.11"
-          BUILD="$(curl -fsSL "$API/builds" | jq -r '.builds[-1].build')"
+          API="https://fill.papermc.io/v3/projects/folia/versions/1.21.11/builds"
+          USER_AGENT="CyoriaSMP-GitHub-Actions/1.0 (https://cytechteam.dev)"
+          BUILDS_JSON="$(curl -fsSL -H "User-Agent: $USER_AGENT" "$API")"
+          BUILD="$(jq -r 'first(.[] | select(.channel == "STABLE") | .id) // "null"' <<< "$BUILDS_JSON")"
+          DOWNLOAD_URL="$(jq -r 'first(.[] | select(.channel == "STABLE") | .downloads."server:default".url) // "null"' <<< "$BUILDS_JSON")"
+          SHA256="$(jq -r 'first(.[] | select(.channel == "STABLE") | .downloads."server:default".checksums.sha256) // "null"' <<< "$BUILDS_JSON")"
           test -n "$BUILD" && test "$BUILD" != "null"
+          test -n "$DOWNLOAD_URL" && test "$DOWNLOAD_URL" != "null"
+          test -n "$SHA256" && test "$SHA256" != "null"
           mkdir -p runtime/plugins/Skript/scripts
-          curl -fsSL "$API/builds/$BUILD/downloads/folia-1.21.11-$BUILD.jar" -o runtime/folia.jar
+          curl -fL "$DOWNLOAD_URL" -o runtime/folia.jar
+          echo "$SHA256  runtime/folia.jar" | sha256sum -c -
           JAR="$(find build/libs -maxdepth 1 -type f -name 'Skript*.jar' ! -name '*sources*' ! -name '*javadoc*' | head -n 1)"
           test -n "$JAR"
           cp "$JAR" runtime/plugins/Skript.jar
