@@ -11,10 +11,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: skript-folia-runtime-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   runtime-smoke:
     runs-on: ubuntu-latest
