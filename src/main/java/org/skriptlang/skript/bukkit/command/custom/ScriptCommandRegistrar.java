@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import ch.njol.skript.util.region.TaskUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -61,7 +62,7 @@ public final class ScriptCommandRegistrar {
 					commandRegistrar.register(command.node(), command.description(), command.aliases()));
 				processRegistrationSet();
 				// once command registration has finished, and new help initialized, add in our custom entries
-				Bukkit.getScheduler().runTask(plugin, () -> {
+				TaskUtils.getGlobalScheduler().runTask( () -> {
 					HelpMap helpMap = Bukkit.getHelpMap();
 					indexHelpTopic.clear();
 					indexHelpTopic.replaceExisting(helpMap);
@@ -91,7 +92,7 @@ public final class ScriptCommandRegistrar {
 			}
 
 			// we have to delay replacing the existing help index entry since it does not yet exist
-			Bukkit.getScheduler().runTask(plugin, () -> indexHelpTopic.replaceExisting(Bukkit.getHelpMap()));
+			TaskUtils.getGlobalScheduler().runTask( () -> indexHelpTopic.replaceExisting(Bukkit.getHelpMap()));
 		});
 	}
 
@@ -110,8 +111,8 @@ public final class ScriptCommandRegistrar {
 	 * @see #register(ScriptBrigadierCommand)
 	 */
 	public static void processRegistrations() {
-		if (!Bukkit.isPrimaryThread()) {
-			Bukkit.getScheduler().runTask(plugin, ScriptCommandRegistrar::processRegistrations);
+		if (!Bukkit.isGlobalTickThread()) {
+			TaskUtils.getGlobalScheduler().runTask( ScriptCommandRegistrar::processRegistrations);
 			return;
 		}
 
@@ -229,8 +230,15 @@ public final class ScriptCommandRegistrar {
 	 * @see #unregister(ScriptBrigadierCommand)
 	 */
 	public static void processUnregistrations() {
-		if (!Bukkit.isPrimaryThread()) {
-			Bukkit.getScheduler().runTask(plugin, ScriptCommandRegistrar::processUnregistrations);
+		// During Folia/Paper shutdown the plugin is already disabled, and
+		// requesting a new scheduled task is forbidden. The server owns
+		// command dispatcher teardown at this point.
+		if (plugin == null || !plugin.isEnabled()) {
+			PENDING_UNREGISTRATIONS.clear();
+			return;
+		}
+		if (!Bukkit.isGlobalTickThread()) {
+			TaskUtils.getGlobalScheduler().runTask( ScriptCommandRegistrar::processUnregistrations);
 			return;
 		}
 

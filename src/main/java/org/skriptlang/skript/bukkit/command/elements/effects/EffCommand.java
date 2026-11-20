@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import ch.njol.skript.util.region.TaskUtils;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -89,7 +91,7 @@ public class EffCommand extends Effect {
 					}
 					Utils.sendPluginMessage(player, EffConnect.BUNGEE_CHANNEL, MESSAGE_CHANNEL, player.getName(), "/" + command);
 				} else {
-					dispatchCommand(sender, command, this);
+					dispatchCommandInRegion(sender, command, this);
 				}
 			}
 		}
@@ -103,6 +105,16 @@ public class EffCommand extends Effect {
 			.append("command", commands)
 			.appendIf(senders != null, "by", senders)
 			.toString();
+	}
+
+	private static void dispatchCommandInRegion(CommandSender sender, String command, RuntimeErrorProducer producer) {
+		if (sender instanceof Entity entity && !Bukkit.isOwnedByCurrentRegion(entity)) {
+			TaskUtils.getEntityScheduler(entity).runTask(() -> dispatchCommand(sender, command, producer));
+		} else if (sender instanceof Entity || Bukkit.isGlobalTickThread()) {
+			dispatchCommand(sender, command, producer);
+		} else {
+			TaskUtils.getGlobalScheduler().runTask(() -> dispatchCommand(sender, command, producer));
+		}
 	}
 
 	@ApiStatus.Internal
