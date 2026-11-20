@@ -1,4 +1,4 @@
-name: Folia 1.21.11 Build and Test
+name: Paper 1.21.11 Compatibility Build and Test
 
 on:
   push:
