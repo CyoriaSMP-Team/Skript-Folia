@@ -11,10 +11,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: skript-folia-1.21.11-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   build-test:
     runs-on: ubuntu-latest
